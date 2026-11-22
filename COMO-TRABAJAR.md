@@ -1,5 +1,22 @@
 # Cómo trabajamos en el repositorio
 
+## Lo primero: Token y TipoToken (Dani)
+
+> ⚠️ **Esto va antes que todo lo demás.** El sintáctico (Adrian) y la interfaz (Gabriela) trabajan con la lista de tokens que arma el léxico. Mientras `Token.cs` y `TipoToken.cs` no estén en `main`, ninguno de los dos puede compilar ni probar su parte.
+
+Dani, apenas clones el repo (los pasos están más abajo, en "La primera vez"):
+
+1. Crea tu rama `p1-lexico`.
+2. Crea la carpeta `AnalizadorLexicoSintactico/Lexico/` con **solo dos archivos**, en el namespace `AnalizadorLexicoSintactico.Lexico`:
+   - `TipoToken.cs`: el enum con las categorías de token (palabra reservada, identificador, número entero, número real, cadena, operador aritmético, operador relacional, asignación, delimitador…).
+   - `Token.cs`: la clase con `Tipo` (TipoToken), `Texto`, `Linea` y `Columna`, como dice el [contrato](#contrato-entre-las-partes).
+3. Revisa que compile, haz commit **solo de esos dos archivos** y push a tu rama.
+4. Abre un pull request a `main` con el título `P1: Token y TipoToken` y avisa en el grupo.
+5. Cuando Adrian lo une, Adrian y Gabriela hacen `git pull origin main` en sus ramas y ya pueden seguir.
+6. Después sigue con el resto del léxico (`PalabrasReservadas`, `AutomataFinito`, `AnalizadorLexico`) en la misma rama, y al final abre otro pull request.
+
+Si más adelante necesitas cambiar algo de `Token` o `TipoToken` (un nombre, una categoría), **avisa en el grupo antes**, porque rompe el código de los otros dos.
+
 ## La regla principal
 
 1. Cada uno trabaja **solo en su rama**.

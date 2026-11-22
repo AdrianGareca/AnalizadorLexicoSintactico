@@ -9,6 +9,9 @@ Es una aplicación de escritorio en **C# WinForms** (.NET 10, Visual Studio 2026
 3. Comprueba que el código cumpla la **gramática libre de contexto** con un parser descendente recursivo y arma el árbol de derivación.
 4. Avisa si una variable se usa sin declararla o se declara dos veces, usando una **tabla de símbolos**.
 
+> ⚠️ **Dani (P1): lo primero que tienes que subir es `Token.cs` y `TipoToken.cs`.**
+> Sin esos dos archivos Adrian (sintáctico) y Gabriela (interfaz) no pueden avanzar, porque los dos trabajan con la lista de tokens. Súbelos solos, antes que el resto del léxico, en un pull request chiquito. Los pasos están en [COMO-TRABAJAR.md](COMO-TRABAJAR.md#lo-primero-token-y-tipotoken-dani).
+
 ## Equipo
 
 - **P1, análisis léxico (AFD):** Dani-XD, rama `p1-lexico`.
