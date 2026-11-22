@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LEXIS · Mini-compilador léxico y sintáctico</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:opsz,wght@8..60,560;8..60,650&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="cabecera">
+    <p class="curso">Lenguajes formales y autómatas</p>
+    <p class="marca">LEXIS</p>
+    <h1>Mini-compilador léxico y sintáctico</h1>
+    <p class="lead">Reconoce tokens con autómatas finitos, comprueba paréntesis, corchetes y llaves con un autómata de pila, y decide si el fragmento pertenece al lenguaje con una gramática libre de contexto.</p>
+    <p class="flujo">Fuente → AFD (tokens) → gramática libre de contexto. En paralelo, un autómata de pila lee los delimitadores.</p>
+  </header>
+
+  <main class="rejilla">
+    <section class="panel" aria-label="Editor">
+      <div class="barra">
+        <label class="campo">
+          Ejemplo
+          <select id="ejemplos"></select>
+        </label>
+        <div class="acciones">
+          <button type="button" class="primario" id="analizar">Analizar</button>
+          <button type="button" class="secundario" id="reproducir-atajo">Paso a paso</button>
+        </div>
+      </div>
+      <div class="editor-caja">
+        <div id="gutter" class="gutter" aria-hidden="true"></div>
+        <textarea id="fuente" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Fragmento de código o expresión"></textarea>
+      </div>
+      <div class="barra-editor">
+        <span id="posicion">Línea 1, columna 1</span>
+        <span id="aviso"></span>
+        <span class="atajo">Ctrl + Enter analiza</span>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="Resultado">
+      <p id="veredicto" class="veredicto" aria-live="polite">Escribe un fragmento y pulsa Analizar.</p>
+      <div id="chips" class="chips"></div>
+      <p id="resumen" class="resumen"></p>
+
+      <div id="sim" class="sim" hidden>
+        <div class="sim-texto">
+          <p class="kicker" id="sim-fase">Recorrido</p>
+          <p id="sim-titulo" class="sim-titulo"></p>
+          <p id="sim-detalle"></p>
+        </div>
+        <div id="sim-pila"></div>
+        <div class="sim-controles">
+          <button type="button" class="secundario" id="sim-prev">Anterior</button>
+          <button type="button" class="primario" id="sim-play">Reproducir</button>
+          <button type="button" class="secundario" id="sim-next">Siguiente</button>
+          <button type="button" class="secundario" id="sim-fin">Resultado</button>
+          <label class="rango">Paso <input id="sim-rango" type="range" min="0" max="0" value="0"></label>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button type="button" data-vista="tokens" aria-selected="true">Tokens</button>
+        <button type="button" data-vista="pila" aria-selected="false">Pila</button>
+        <button type="button" data-vista="arbol" aria-selected="false">Árbol</button>
+        <button type="button" data-vista="auto" aria-selected="false">Autómatas</button>
+        <button type="button" data-vista="gramatica" aria-selected="false">Gramática</button>
+      </div>
+
+      <div data-panel="tokens" id="vista-tokens" role="tabpanel"></div>
+
+      <div data-panel="pila" id="vista-pila" role="tabpanel" hidden>
+        <div id="pila-analisis"></div>
+        <section class="laboratorio">
+          <h2>Laboratorio de la pila</h2>
+          <p>Escribe solo delimitadores, o un fragmento con cadenas y comentarios. Los paréntesis que estén dentro de un texto no entran a la pila.</p>
+          <form id="lab-pila">
+            <input id="entrada-pila" type="text" value="([]{})" aria-label="Cadena para el autómata de pila" spellcheck="false">
+            <button type="submit" class="secundario">Simular pila</button>
+          </form>
+          <div id="salida-pila"></div>
+        </section>
+        <section class="teoria">
+          <h2>Autómata de pila</h2>
+          <pre>P = (Q, Σ, Γ, δ, q, Z₀, {qf})
+Q = { q, qf }
+Σ = { (, ), [, ], {, } }
+Γ = { (, [, {, Z₀ }
+Aceptación: al consumir la entrada, δ(q, ε, Z₀) = (qf, Z₀).</pre>
+          <p>Transiciones, con X cualquier símbolo de la pila:</p>
+          <ul>
+            <li>δ(q, '(', X) = (q, '( X) y lo mismo para '[' y '{'.</li>
+            <li>δ(q, ')', '(') = (q, ε). Igual para ']' con '[' y '}' con '{'.</li>
+            <li>Un cierre que no coincide con el tope no tiene transición: la cadena se rechaza.</li>
+            <li>';' y ',' son separadores del lenguaje. No pertenecen a Σ de esta pila.</li>
+          </ul>
+          <p>El autómata no ve comentarios ni el interior de las cadenas. Esa separación la hace el mismo recorrido que usa el analizador léxico, para que un paréntesis escrito dentro de un texto no se confunda con uno del programa.</p>
+        </section>
+      </div>
+
+      <div data-panel="arbol" id="vista-arbol" role="tabpanel" hidden></div>
+
+      <div data-panel="auto" id="vista-auto" role="tabpanel" hidden>
+        <p class="nota-ancha">El laboratorio exige que <em>toda</em> la cadena termine en un estado de aceptación. El analizador léxico, en cambio, se queda con el prefijo más largo que haya pasado por un estado final y deja el resto para el token siguiente. Por eso <code>12.</code> se rechaza aquí y, en el editor, se parte en el número <code>12</code> y un punto erróneo.</p>
+        <div class="auto-grid">
+          <article>
+            <h2>Identificadores</h2>
+            <svg id="auto-ident" class="diagrama" viewBox="0 0 460 300" role="img" aria-label="Autómata finito de identificadores">
+              <defs>
+                <marker id="f-ident" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#8a846c"></path></marker>
+                <marker id="f-ident-on" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#e0b15a"></path></marker>
+              </defs>
+              <path class="ar" d="M18 96 H44"></path>
+              <path class="ar" data-edge="q0-q1" d="M96 96 H219"></path>
+              <text class="eti" x="158" y="84" text-anchor="middle">letra | _</text>
+              <path class="ar" data-edge="q0-qe" d="M88 114 C140 160 180 214 236 214"></path>
+              <text class="eti" x="150" y="178" text-anchor="middle">dígito</text>
+              <path class="ar" data-edge="q1-q1" d="M236 68 C228 24 292 24 284 68"></path>
+              <text class="eti" x="260" y="20" text-anchor="middle">letra | dígito | _</text>
+              <path class="ar" data-edge="qe-qe" d="M236 250 C228 286 292 286 284 250"></path>
+              <text class="eti" x="390" y="276" text-anchor="start">Σ</text>
+              <g class="st" data-estado="q0"><circle cx="70" cy="96" r="26"></circle><text x="70" y="101" text-anchor="middle">q0</text></g>
+              <g class="st final" data-estado="q1"><circle cx="260" cy="96" r="26"></circle><circle class="anillo" cx="260" cy="96" r="31"></circle><text x="260" y="101" text-anchor="middle">q1</text></g>
+              <g class="st" data-estado="qe"><circle cx="260" cy="224" r="26"></circle><text x="260" y="229" text-anchor="middle">qe</text></g>
+              <text class="sub" x="70" y="146" text-anchor="middle">inicio</text>
+              <text class="sub" x="260" y="146" text-anchor="middle">acepta</text>
+              <text class="sub" x="308" y="228" text-anchor="start">sumidero</text>
+            </svg>
+            <form class="lab-afd" data-auto="ident">
+              <input id="entrada-ident" type="text" value="contador" aria-label="Cadena para el AFD de identificadores" spellcheck="false">
+              <button type="submit" class="secundario">Reconocer</button>
+            </form>
+            <div class="pruebas-rapidas">
+              <button type="button" data-auto="ident" data-cadena="contador">contador</button>
+              <button type="button" data-auto="ident" data-cadena="if">if</button>
+              <button type="button" data-auto="ident" data-cadena="año">año</button>
+              <button type="button" data-auto="ident" data-cadena="_valor">_valor</button>
+              <button type="button" data-auto="ident" data-cadena="2a">2a</button>
+              <button type="button" data-auto="ident" data-cadena="">ε</button>
+            </div>
+            <p id="nota-ident" class="nota"></p>
+            <pre id="tupla-ident" class="tupla"></pre>
+            <div id="tabla-ident"></div>
+            <div id="reservadas"></div>
+          </article>
+          <article>
+            <h2>Números</h2>
+            <svg id="auto-numero" class="diagrama" viewBox="0 0 640 300" role="img" aria-label="Autómata finito de números">
+              <defs>
+                <marker id="f-num" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#8a846c"></path></marker>
+                <marker id="f-num-on" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#e0b15a"></path></marker>
+              </defs>
+              <path class="ar" d="M8 78 H24"></path>
+              <path class="ar" data-edge="q0-q1" d="M76 78 H159"></path>
+              <text class="eti" x="118" y="68" text-anchor="middle">dígito</text>
+              <path class="ar" data-edge="q1-q1" d="M166 50 C158 12 222 12 214 50"></path>
+              <text class="eti" x="190" y="14" text-anchor="middle">dígito</text>
+              <path class="ar" data-edge="q1-q2" d="M221 78 H324"></path>
+              <text class="eti" x="272" y="68" text-anchor="middle">.</text>
+              <path class="ar" data-edge="q2-q3" d="M376 78 H479"></path>
+              <text class="eti" x="428" y="68" text-anchor="middle">dígito</text>
+              <path class="ar" data-edge="q3-q3" d="M486 50 C478 12 542 12 534 50"></path>
+              <text class="eti" x="510" y="14" text-anchor="middle">dígito</text>
+              <path class="ar" data-edge="q0-qe" d="M50 104 C50 168 120 200 164 200"></path>
+              <text class="eti" x="78" y="150" text-anchor="middle">.</text>
+              <g class="st" data-estado="q0"><circle cx="50" cy="78" r="26"></circle><text x="50" y="83" text-anchor="middle">q0</text></g>
+              <g class="st final" data-estado="q1"><circle cx="190" cy="78" r="26"></circle><circle class="anillo" cx="190" cy="78" r="31"></circle><text x="190" y="83" text-anchor="middle">q1</text></g>
+              <g class="st" data-estado="q2"><circle cx="350" cy="78" r="26"></circle><text x="350" y="83" text-anchor="middle">q2</text></g>
+              <g class="st final" data-estado="q3"><circle cx="510" cy="78" r="26"></circle><circle class="anillo" cx="510" cy="78" r="31"></circle><text x="510" y="83" text-anchor="middle">q3</text></g>
+              <g class="st" data-estado="qe"><circle cx="190" cy="200" r="26"></circle><text x="190" y="205" text-anchor="middle">qe</text></g>
+              <text class="sub" x="50" y="128" text-anchor="middle">inicio</text>
+              <text class="sub" x="190" y="128" text-anchor="middle">entero</text>
+              <text class="sub" x="350" y="128" text-anchor="middle">no final</text>
+              <text class="sub" x="510" y="128" text-anchor="middle">real</text>
+              <text class="sub" x="190" y="248" text-anchor="middle">sumidero</text>
+            </svg>
+            <form class="lab-afd" data-auto="numero">
+              <input id="entrada-numero" type="text" value="3.14" aria-label="Cadena para el AFD de números" spellcheck="false">
+              <button type="submit" class="secundario">Reconocer</button>
+            </form>
+            <div class="pruebas-rapidas">
+              <button type="button" data-auto="numero" data-cadena="42">42</button>
+              <button type="button" data-auto="numero" data-cadena="3.14">3.14</button>
+              <button type="button" data-auto="numero" data-cadena="12.">12.</button>
+              <button type="button" data-auto="numero" data-cadena=".5">.5</button>
+              <button type="button" data-auto="numero" data-cadena="12a">12a</button>
+              <button type="button" data-auto="numero" data-cadena="-3">-3</button>
+            </div>
+            <p id="nota-numero" class="nota"></p>
+            <pre id="tupla-numero" class="tupla"></pre>
+            <div id="tabla-numero"></div>
+          </article>
+        </div>
+        <section class="teoria">
+          <h2>Operadores</h2>
+          <p>Se reconocen con munch máximo: si dos caracteres forman un operador, ese lexema gana sobre dos operadores de un carácter. Así <code>==</code> no se parte en <code>=</code> <code>=</code>, ni <code>&gt;=</code> en <code>&gt;</code> <code>=</code>.</p>
+          <p>El signo de un número no entra al AFD de números. <code>-3</code> son dos tokens: el unario <code>-</code> y el entero <code>3</code>. Las conectivas del lenguaje son las palabras <code>and</code>, <code>or</code> y <code>not</code>.</p>
+        </section>
+      </div>
+
+      <div data-panel="gramatica" id="vista-gramatica" role="tabpanel" hidden>
+        <h2>Gramática libre de contexto</h2>
+        <pre id="gramatica" class="gramatica"></pre>
+        <ul id="notas-gramatica"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>LEXIS cubre el análisis léxico y el sintáctico. No comprueba tipos ni variables declaradas. Abre <code>index.html</code> en el navegador; no hace falta instalar nada. Las pruebas del núcleo están en <code>js/pruebas.js</code>.</p>
+  </footer>
+  <noscript>Activa JavaScript para usar el analizador.</noscript>
+  <script src="js/afd.js"></script>
+  <script src="js/lexico.js"></script>
+  <script src="js/pila.js"></script>
+  <script src="js/sintactico.js"></script>
+  <script src="js/ejemplos.js"></script>
+  <script src="js/interfaz.js"></script>
+</body>
+</html>
