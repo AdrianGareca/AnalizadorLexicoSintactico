@@ -44,6 +44,7 @@ Mira la rama actual con `git branch --show-current`:
 - Código **simple y claro**, que la persona pueda **explicar en la exposición**. Nada de librerías externas ni trucos avanzados.
 - Nombres y comentarios **en español**, como el resto del proyecto.
 - Los errores se reportan con `ErrorAnalisis` (de `Comun/`), con línea y columna.
+- La interfaz usa los colores, las fuentes y los métodos de `Comun/Tema.cs`, siguiendo `ESTILO.md`. No inventes otros colores ni otro estilo (ni modo oscuro, ni degradados, ni otras fuentes).
 
 ---
 

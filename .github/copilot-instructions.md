@@ -12,3 +12,4 @@ Las reglas completas están en `AGENTS.md`, en la raíz del repositorio. Este es
 - No cambies el mini-lenguaje (palabras reservadas en español: `entero`, `real`, `cadena`, `si`, `sino`, `mientras`, `imprimir`) ni la tecnología.
 - Nunca hagas commit o push a `main`, ni uses `git add .`. No subas `bin/`, `obj/` ni `.vs/`.
 - Código simple, con nombres y comentarios en español, que la persona pueda explicar en la exposición.
+- La interfaz usa `Comun/Tema.cs` y sigue `ESTILO.md`. No inventes otros colores ni otro estilo.

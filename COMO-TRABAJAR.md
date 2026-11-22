@@ -24,7 +24,7 @@ Así nadie pisa el trabajo de otro, y en el historial se ve qué hizo cada uno, 
 - `Documentos/Informe/` y `Documentos/Presentacion/`.
 
 **Compartido** (no se toca desde las ramas personales):
-- `AnalizadorLexicoSintactico.sln`, `AnalizadorLexicoSintactico.csproj`, `Program.cs`, `Comun/ErrorAnalisis.cs`, `.gitignore` y los archivos `.md`.
+- `AnalizadorLexicoSintactico.sln`, `AnalizadorLexicoSintactico.csproj`, `Program.cs`, `Comun/ErrorAnalisis.cs`, `Comun/Tema.cs`, `.gitignore` y los archivos `.md`.
 - Si necesitas un cambio en algo compartido, avisa en el grupo y Adrian lo hace en `main`.
 
 > No hace falta tocar el `.csproj` para agregar tus archivos. El proyecto incluye solo cualquier `.cs` que esté dentro de la carpeta.
@@ -92,6 +92,7 @@ Así se conectan las partes. Si alguien necesita cambiar un nombre o un método,
 
 **Comun (ya existe, compartido):**
 - `ErrorAnalisis`: guarda `Tipo` (`TipoError.Lexico`, `Balanceo`, `Sintactico` o `Semantico`), `Mensaje`, `Linea` y `Columna`. Se crea con `new ErrorAnalisis(TipoError.Lexico, "mensaje", linea, columna)`.
+- `Tema`: los colores, las fuentes y el estilo de los botones y las tablas. La interfaz usa solo esto. Ver [ESTILO.md](ESTILO.md).
 
 **P1 entrega (lo usan P2 y P3):**
 - `TipoToken`: un enum con las categorías de token (palabra reservada, identificador, número entero, número real, cadena, operadores, delimitadores…).

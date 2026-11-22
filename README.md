@@ -19,6 +19,7 @@ Es una aplicación de escritorio en **C# WinForms** (.NET 10, Visual Studio 2026
 
 - [COMO-TRABAJAR.md](COMO-TRABAJAR.md): cómo crear tu rama, cómo subir tu parte, cómo hacer el pull request y qué carpeta es de cada uno.
 - [AGENTS.md](AGENTS.md): reglas para cuando trabajes con IA (ChatGPT, Copilot, Claude, Gemini, Cursor…). Léelo aunque no uses IA, porque las reglas valen para todos.
+- [ESTILO.md](ESTILO.md): cómo debe verse la ventana. Los colores y las fuentes están en `Comun/Tema.cs`.
 
 ## Estructura del proyecto
 
@@ -29,7 +30,8 @@ AnalizadorLexicoSintactico/
 ├── AnalizadorLexicoSintactico.csproj     (compartido)
 ├── Program.cs                            (compartido)
 ├── Comun/
-│   └── ErrorAnalisis.cs                  (compartido)
+│   ├── ErrorAnalisis.cs                  (compartido)
+│   └── Tema.cs                           (compartido: colores y fuentes)
 ├── Lexico/                               P1
 │   ├── TipoToken.cs
 │   ├── Token.cs
