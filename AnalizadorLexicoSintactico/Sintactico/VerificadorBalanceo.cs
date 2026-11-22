@@ -10,7 +10,7 @@ namespace AnalizadorLexicoSintactico.Sintactico
     {
         public List<ErrorAnalisis> Errores { get; } = new List<ErrorAnalisis>();
         public List<string> Pasos { get; } = new List<string>();
-        public bool Verificar(List<Token> token)
+        public bool Verificar(List<Token> tokens)
         {
             return true;
         }
