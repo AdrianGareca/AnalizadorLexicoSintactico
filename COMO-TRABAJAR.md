@@ -43,8 +43,7 @@ Así nadie pisa el trabajo de otro, y en el historial se ve qué hizo cada uno, 
 **Compartido** (no se toca desde las ramas personales):
 - `AnalizadorLexicoSintactico.sln`, `AnalizadorLexicoSintactico.csproj`, `Program.cs`, `Comun/ErrorAnalisis.cs`, `Comun/Tema.cs`, la carpeta `Pruebas/`, `.gitignore` y los archivos `.md`.
 - Si necesitas un cambio en algo compartido, avisa en el grupo y Adrian lo hace en `main`.
-- Por ahora `Program.cs` abre una ventana vacía, para que el proyecto compile aunque todavía no esté la interfaz. Cuando entre `FrmPrincipal` a `main`, Adrian cambia esa línea.
-- Las carpetas `Lexico/`, `Sintactico/`, `Interfaz/` y `Ejemplos/` todavía no existen en el repo (Git no guarda carpetas vacías). Cada uno crea la suya en su rama, con el nombre exacto.
+- `Program.cs` abre la ventana principal (`Interfaz.FrmPrincipal`).
 
 > No hace falta tocar el `.csproj` para agregar tus archivos. El proyecto incluye solo cualquier `.cs` que esté dentro de la carpeta.
 
