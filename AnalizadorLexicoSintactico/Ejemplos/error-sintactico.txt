@@ -1,0 +1,4 @@
+// Error sintáctico: falta el ';' al final de la declaración.
+// Los paréntesis y las llaves están balanceados, y edad sí existe.
+entero edad = 18
+imprimir("hola");

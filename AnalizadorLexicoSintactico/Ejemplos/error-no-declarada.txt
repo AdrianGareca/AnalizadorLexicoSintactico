@@ -1,0 +1,3 @@
+// Error semántico: nota se usa y nunca se declaró.
+entero edad = 18;
+imprimir(nota);
