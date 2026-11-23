@@ -1,0 +1,5 @@
+// Error de balanceo: la llave del si se abre y nunca se cierra.
+// La pila lo reporta. El sintáctico también pide esa llave.
+entero edad = 18;
+si (edad >= 18) {
+    imprimir("Mayor");

@@ -1,0 +1,4 @@
+// Error léxico: '@' no es un carácter del mini-lenguaje.
+// El resto del programa es válido, para que el único error sea léxico.
+entero edad = 25;
+@

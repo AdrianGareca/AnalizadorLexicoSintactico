@@ -1,0 +1,15 @@
+// Programa correcto: declaraciones, si, sino y mientras.
+entero edad = 25;
+real nota = 7.5;
+cadena nombre = "Ana";
+entero lista[5];
+
+si (edad >= 18) {
+    imprimir("Mayor de edad");
+} sino {
+    imprimir("Menor de edad");
+}
+
+mientras (edad < 30) {
+    edad = edad + 1;
+}
