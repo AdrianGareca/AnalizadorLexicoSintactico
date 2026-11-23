@@ -6,8 +6,6 @@ using AnalizadorLexicoSintactico.Lexico;
 
 namespace AnalizadorLexicoSintactico.Sintactico
 {
-    // Revisa con una pila que los ( ) [ ] { } estén bien abiertos y cerrados.
-    // Trabaja sobre los tokens del léxico, así un "(" dentro de una cadena no cuenta.
     public class VerificadorBalanceo
     {
         public List<ErrorAnalisis> Errores { get; } = new List<ErrorAnalisis>();
@@ -21,13 +19,11 @@ namespace AnalizadorLexicoSintactico.Sintactico
 
             foreach (Token token in tokens)
             {
-                // Apertura: se mete a la pila
                 if (token.Texto == "(" || token.Texto == "[" || token.Texto == "{")
                 {
                     simbolo.Push(token);
                     Pasos.Add("Push " + token.Texto + " en linea " + token.Linea);
                 }
-                // Cierre: tiene que corresponder con el tope de la pila
                 else if (token.Texto == ")" || token.Texto == "]" || token.Texto == "}")
                 {
                     if (simbolo.Count == 0)
@@ -57,7 +53,6 @@ namespace AnalizadorLexicoSintactico.Sintactico
                 }
             }
 
-            // Lo que quedó en la pila se abrió y nunca se cerró
             while (simbolo.Count > 0)
             {
                 Token abierto = simbolo.Pop();
@@ -70,7 +65,6 @@ namespace AnalizadorLexicoSintactico.Sintactico
             return Errores.Count == 0;
         }
 
-        // Devuelve el símbolo que abre a cada cierre
         private string Apertura(string cierre)
         {
             if (cierre == ")") return "(";
