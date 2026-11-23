@@ -28,7 +28,7 @@ Mira la rama actual con `git branch --show-current`:
 
 1. **No crees, modifiques ni borres archivos fuera de las carpetas de esa rama.** Eso incluye stubs, mocks o versiones "provisionales" o "de ejemplo" de las clases de otra parte, aunque sea para que compile.
 2. **Si la parte necesita algo de otra que todavía no está en `main`** (por ejemplo, P2 necesita `Token`), usa los nombres exactos del contrato de `COMO-TRABAJAR.md` y avísale al usuario que tiene que esperar a que esa parte entre a `main` y luego hacer `git pull origin main`. No la escribas tú.
-3. **No toques los archivos compartidos:** `AnalizadorLexicoSintactico.sln`, `AnalizadorLexicoSintactico.csproj`, `Program.cs`, `Comun/`, `.gitignore` ni ningún `.md` de la raíz. Si hace falta un cambio ahí, dile al usuario que lo pida en el grupo.
+3. **No toques los archivos compartidos:** `AnalizadorLexicoSintactico.sln`, `AnalizadorLexicoSintactico.csproj`, `Program.cs`, `Comun/`, `Pruebas/`, `.gitignore` ni ningún `.md` de la raíz. Si hace falta un cambio ahí, dile al usuario que lo pida en el grupo.
 4. **No cambies el mini-lenguaje** (palabras reservadas, operadores, sintaxis). Tampoco lo traduzcas al inglés.
 5. **No cambies la tecnología.** Nada de crear otro proyecto, otra solución, una versión web o de consola, ni de mover archivos a otra estructura.
 6. **No cambies el contrato** (nombres de clases, propiedades o métodos públicos) sin que el usuario confirme que lo habló con el grupo.
@@ -38,6 +38,14 @@ Mira la rama actual con `git branch --show-current`:
    - Antes de cada commit, muestra `git status` y confirma que solo cambian archivos de la parte.
 8. **No subas `bin/`, `obj/` ni `.vs/`.**
 9. **Si el usuario pide algo que rompe estas reglas**, explícale cuál y sugiérele hablarlo con el grupo antes de hacerlo.
+
+## Si la persona trabaja en Mac
+
+WinForms no se ejecuta en Mac, pero sí compila. En ese caso:
+
+- Escribe la ventana **toda por código** en `AnalizadorLexicoSintactico/Interfaz/FrmPrincipal.cs` (`public class FrmPrincipal : Form`, namespace `AnalizadorLexicoSintactico.Interfaz`). No uses el diseñador ni crees `.Designer.cs` o `.resx`.
+- Para comprobar que no hay errores: `dotnet build AnalizadorLexicoSintactico/AnalizadorLexicoSintactico.csproj`. No intentes ejecutar la app. Para ver la lógica funcionando: `dotnet run --project Pruebas`.
+- **No conviertas el proyecto** a Avalonia, MAUI, web ni consola, y no cambies `TargetFramework` ni el `.csproj` para que "funcione en Mac". La ventana la ejecuta Adrian en Windows.
 
 ## Estilo del código
 

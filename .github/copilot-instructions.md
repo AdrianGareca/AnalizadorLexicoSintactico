@@ -8,7 +8,7 @@ Las reglas completas están en `AGENTS.md`, en la raíz del repositorio. Este es
   - `p3-interfaz`: solo `AnalizadorLexicoSintactico/Interfaz/`, `AnalizadorLexicoSintactico/Ejemplos/`, `Documentos/Informe/` y `Documentos/Presentacion/`.
 - No crees ni modifiques archivos de otras partes, tampoco versiones provisionales o de ejemplo de sus clases.
 - Para conectar con otras partes, usa exactamente los nombres de la sección "Contrato entre las partes" de `COMO-TRABAJAR.md`.
-- No toques archivos compartidos: `.sln`, `.csproj`, `Program.cs`, `Comun/`, `.gitignore` ni los `.md`.
+- No toques archivos compartidos: `.sln`, `.csproj`, `Program.cs`, `Comun/`, `Pruebas/`, `.gitignore` ni los `.md`.
 - No cambies el mini-lenguaje (palabras reservadas en español: `entero`, `real`, `cadena`, `si`, `sino`, `mientras`, `imprimir`) ni la tecnología.
 - Nunca hagas commit o push a `main`, ni uses `git add .`. No subas `bin/`, `obj/` ni `.vs/`.
 - Código simple, con nombres y comentarios en español, que la persona pueda explicar en la exposición.

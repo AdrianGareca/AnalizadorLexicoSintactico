@@ -53,6 +53,7 @@ AnalizadorLexicoSintactico/
 │   └── FrmPrincipal.resx
 └── Ejemplos/                             P3
     └── (un .txt correcto y uno por cada tipo de error)
+Pruebas/                                  (compartido: probar sin la ventana, en Windows o Mac)
 Documentos/
 ├── AFD/                                  P1 (diagrama y tabla de transiciones)
 ├── Gramatica/                            P2 (gramática BNF y árbol de ejemplo)

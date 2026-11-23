@@ -36,12 +36,12 @@ Así nadie pisa el trabajo de otro, y en el historial se ve qué hizo cada uno, 
 - `Documentos/Gramatica/`: la gramática en BNF y un árbol de derivación de ejemplo.
 
 **P3, gabrielarcp, rama `p3-interfaz`**
-- `AnalizadorLexicoSintactico/Interfaz/`: `FrmPrincipal.cs`, `FrmPrincipal.Designer.cs`, `FrmPrincipal.resx`.
+- `AnalizadorLexicoSintactico/Interfaz/`: `FrmPrincipal.cs`. La ventana se puede armar toda por código dentro de ese archivo, sin el diseñador. Así se puede hacer desde Mac (ver "Si trabajas en Mac"). `FrmPrincipal.Designer.cs` y `FrmPrincipal.resx` solo existen si se usa el diseñador de Visual Studio.
 - `AnalizadorLexicoSintactico/Ejemplos/`: un `.txt` con código correcto y uno por cada tipo de error (léxico, balanceo, sintáctico y variable no declarada).
 - `Documentos/Informe/` y `Documentos/Presentacion/`.
 
 **Compartido** (no se toca desde las ramas personales):
-- `AnalizadorLexicoSintactico.sln`, `AnalizadorLexicoSintactico.csproj`, `Program.cs`, `Comun/ErrorAnalisis.cs`, `Comun/Tema.cs`, `.gitignore` y los archivos `.md`.
+- `AnalizadorLexicoSintactico.sln`, `AnalizadorLexicoSintactico.csproj`, `Program.cs`, `Comun/ErrorAnalisis.cs`, `Comun/Tema.cs`, la carpeta `Pruebas/`, `.gitignore` y los archivos `.md`.
 - Si necesitas un cambio en algo compartido, avisa en el grupo y Adrian lo hace en `main`.
 - Por ahora `Program.cs` abre una ventana vacía, para que el proyecto compile aunque todavía no esté la interfaz. Cuando entre `FrmPrincipal` a `main`, Adrian cambia esa línea.
 - Las carpetas `Lexico/`, `Sintactico/`, `Interfaz/` y `Ejemplos/` todavía no existen en el repo (Git no guarda carpetas vacías). Cada uno crea la suya en su rama, con el nombre exacto.
@@ -103,6 +103,37 @@ Esto **no** pasa los archivos del otro a tu carpeta: solo actualiza tu rama con 
 5. Revisa la pestaña **Files changed**: tienen que salir **solo tus archivos**.
 6. Adrian lo revisa y hace el merge. Si toca archivos de otra parte, se pide corregir antes de unirlo.
 
+## Probar sin la ventana
+
+En `Pruebas/` hay un programa de consola que usa el léxico y el sintáctico igual que lo hará la ventana. Funciona en **Windows, Mac y Linux**. Desde la carpeta del repo:
+
+```bash
+dotnet run --project Pruebas                       # corre varios ejemplos: tokens, pila, errores y tabla
+dotnet run --project Pruebas -- mi_programa.txt    # analiza un archivo y muestra el árbol de derivación
+```
+
+## Si trabajas en Mac (Gabriela)
+
+WinForms **solo se ejecuta en Windows**, pero desde Mac sí se puede **escribir y compilar** la ventana. El plan es este: tú escribes `FrmPrincipal.cs` en Mac y Adrian lo ejecuta en Windows y te pasa capturas o errores.
+
+1. Instala el **SDK de .NET 10** para macOS (desde dotnet.microsoft.com) y Git. Para comprobar que quedó instalado: `dotnet --version`.
+2. Clona el repo y crea tu rama `p3-interfaz` con los comandos de "Con la consola", más arriba.
+3. Abre la carpeta del repo en Cursor o VS Code, con la extensión de C#.
+4. Para ver qué hacen el léxico y el sintáctico: `dotnet run --project Pruebas`.
+5. Escribe la ventana **por código** en `AnalizadorLexicoSintactico/Interfaz/FrmPrincipal.cs`, sin diseñador:
+   - Una clase `public class FrmPrincipal : Form` en el namespace `AnalizadorLexicoSintactico.Interfaz`.
+   - En el constructor creas los controles (paneles, botones, `RichTextBox`, `DataGridView`, `TreeView`), les das tamaño y posición, y los agregas con `Controls.Add(...)`.
+   - Colores, fuentes y botones salen de `Comun/Tema.cs`. La distribución está en `ESTILO.md`.
+   - Para llamar al léxico y al sintáctico, usa los nombres del contrato de abajo.
+6. **Compila** para ver si hay errores. Tiene que decir 0 errores antes de subir:
+   ```bash
+   dotnet build AnalizadorLexicoSintactico/AnalizadorLexicoSintactico.csproj
+   ```
+   `dotnet run` de la app **no funciona en Mac**. Para verla funcionando, Adrian la abre en Windows.
+7. Haz commit y push a `p3-interfaz` (solo tus archivos) y avísale a Adrian para que la pruebe.
+
+Los `Ejemplos/*.txt`, el informe y las diapositivas se hacen completos en Mac, sin depender de Windows.
+
 ## Contrato entre las partes
 
 Así se conectan las partes. Si alguien necesita cambiar un nombre o un método, **avisa en el grupo antes**, porque rompe el código de los demás.
@@ -122,7 +153,8 @@ Así se conectan las partes. Si alguien necesita cambiar un nombre o un método,
 - `VerificadorBalanceo`: tiene `bool Verificar(List<Token> tokens)`, `List<ErrorAnalisis> Errores` y `List<string> Pasos` (lo que hizo la pila, para mostrarlo en la interfaz).
 - `AnalizadorSintactico`: tiene `ArbolSintactico Analizar(List<Token> tokens)`, `List<ErrorAnalisis> Errores` y `TablaSimbolos Tabla`.
 - `ArbolSintactico` tiene `NodoArbol Raiz`. Cada `NodoArbol` tiene `Nombre` y `List<NodoArbol> Hijos`.
-- `TablaSimbolos`: es la lista de variables, cada una con nombre, tipo y línea donde se declaró.
+- `TablaSimbolos`: `Tabla.Simbolos` es la lista de variables. Cada `Simbolo` tiene `Nombre`, `Tipo` y `Linea` (donde se declaró).
+- `ArbolSintactico.ComoTexto()` devuelve el árbol como texto con sangría, por si se quiere mostrar sin `TreeView`.
 
 **P3 usa todo en este orden:** léxico → balanceo → sintáctico, y muestra los tokens, los errores, el árbol (en un TreeView), la tabla de símbolos y los pasos de la pila.
 
@@ -132,7 +164,7 @@ Así se conectan las partes. Si alguien necesita cambiar un nombre o un método,
 
 - `bin/`, `obj/` ni `.vs/`. El `.gitignore` ya los excluye; si Visual Studio te los muestra, no los marques.
 - Archivos de otra parte. Tampoco versiones "provisionales" o "de prueba" de sus clases para que tu código compile.
-- Otros proyectos u otras versiones (web, consola, Python…), ni `.zip`.
+- Otros proyectos u otras versiones (web, consola, Python…), ni `.zip`. El único proyecto extra es `Pruebas/`, que es compartido.
 - Nada con **"Add files via upload"** desde la página de GitHub. Eso sube directo a `main`. Todo se sube desde Visual Studio o la consola, a tu rama.
 
 ## Si algo sale mal
